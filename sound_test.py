@@ -1,3 +1,7 @@
-import winsound
+import pyglet
+from time import sleep
 
-winsound.PlaySound('alert.wav', winsound.SND_FILENAME)
+music = pyglet.resource.media("alert.wav")
+music.play()
+
+sleep(10)

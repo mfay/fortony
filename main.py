@@ -1,4 +1,5 @@
 import urllib2
+import pyglet
 from pyquery import PyQuery as pq
 from time import sleep
 
@@ -13,5 +14,6 @@ while True:
         sleep(60)
     else:
         while True:
-            winsound.PlaySound('alert.wav', winsound.SND_FILENAME)
-            sleep(5)
+            music = pyglet.resource.media("alert.wav")
+            music.play()
+            sleep(10)
