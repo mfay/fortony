@@ -1,25 +1,42 @@
 import urllib2
 import pyglet
 import time
+import logging
 from pyquery import PyQuery as pq
 
+logging.basicConfig(filename="./logs/log.txt", 
+    level=logging.DEBUG,
+    format='%(asctime)s %(message)s')
 
-def log(msg):
-    with open('./logs/log.txt', 'a') as f:
-        f.write("[%s] %s\n" % (time.strftime("%Y-%m-%d %H:%M"), msg))
+def get_html():
+    url = "https://shop.bitmain.com/antminer_s9_asic_bitcoin_miner.htm"
+    try:
+        response = urllib2.urlopen(url)
+        return response.read()
+    except urllib2.URLError:
+        logging.error("Error connecting to website")
+        time.sleep(5)
 
-url = "https://shop.bitmain.com/antminer_s9_asic_bitcoin_miner.htm"
-selector = ".btn-buy-now"
+def get_status(html):
+    selector = ".btn-buy-now"
+    doc = pq(html)
+    return doc(selector).text()
 
-response = urllib2.urlopen(url)
-doc = pq(response.read())
 while True:
-    if doc(selector).text() == "Coming soon":
-        log("Still not available")
-        time.sleep(60)
-    else:
-        log("On sale!!!")
-        while True:
-            music = pyglet.resource.media("alert.wav")
-            music.play()
-            time.sleep(10)
+    sleepTime = 60
+    try:
+        html = get_html()
+        if html:
+            status = get_status(html)
+            if status == "Coming soon":
+                logging.info("Still not available")
+                time.sleep(60)
+            else:
+                logging.info("On sale!!!")
+                while True:
+                    music = pyglet.resource.media("alert.wav")
+                    music.play()
+                    time.sleep(10)
+    except KeyboardInterrupt:
+        print "We are all done here"
+        exit()
