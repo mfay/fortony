@@ -13,7 +13,7 @@ def get_html():
     try:
         response = urllib2.urlopen(url)
         return response.read()
-    except urllib2.URLError:
+    except:
         logging.error("Error connecting to website")
         time.sleep(5)
 
